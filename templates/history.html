@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis History - AI Resume Analyzer{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-clock-history me-2"></i>Your Recent Analyses</h2>
+            <a href="{{ url_for('analyze') }}" class="btn btn-primary">
+                <i class="bi bi-plus-lg me-1"></i>New Analysis
+            </a>
+        </div>
+        <p class="text-muted">Your analyses from this browser session</p>
+    </div>
+</div>
+
+{% if analyses %}
+    <div class="row">
+        {% for analysis in analyses %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="score-badge bg-{{ analysis.score_class }}">
+                                {{ analysis.match_score }}%
+                            </div>
+                            <span class="badge bg-{{ analysis.score_class }}">{{ analysis.score_category }}</span>
+                        </div>
+
+                        <h6 class="card-title text-truncate" title="{{ analysis.resume_filename }}">
+                            <i class="bi bi-file-earmark-text me-1"></i>
+                            {{ analysis.resume_filename[16:] if analysis.resume_filename|length > 16 else analysis.resume_filename }}
+                        </h6>
+
+                        <p class="card-text text-muted small">
+                            <i class="bi bi-calendar me-1"></i>
+                            {{ analysis.created_at }}
+                        </p>
+
+                        <a href="{{ url_for('results', analysis_id=analysis.id) }}" class="btn btn-outline-primary btn-sm w-100">
+                            <i class="bi bi-eye me-1"></i>View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
+                    <h4 class="mt-3">No analyses yet</h4>
+                    <p class="text-muted">Upload your first resume to get started!</p>
+                    <a href="{{ url_for('analyze') }}" class="btn btn-primary">
+                        <i class="bi bi-upload me-2"></i>Analyze Resume
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

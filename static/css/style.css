@@ -1,0 +1,215 @@
+/* AI Resume Analyzer - Custom Styles */
+
+/* Body and Layout */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #f8f9fa;
+}
+
+main {
+    flex: 1;
+}
+
+/* Navbar */
+.navbar-brand {
+    font-weight: 600;
+}
+
+/* Cards */
+.card {
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    font-weight: 600;
+}
+
+/* Score Circle */
+.score-circle {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+}
+
+.score-circle .score-value {
+    font-size: 2.5rem;
+}
+
+/* Score Badge for History */
+.score-badge {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+/* Background Colors for Scores */
+.bg-success {
+    background-color: #198754 !important;
+}
+
+.bg-info {
+    background-color: #0dcaf0 !important;
+}
+
+.bg-warning {
+    background-color: #ffc107 !important;
+    color: #000 !important;
+}
+
+.bg-danger {
+    background-color: #dc3545 !important;
+}
+
+/* Skill Tags */
+.skill-tags {
+    line-height: 2;
+}
+
+.skill-tags .badge {
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+/* Feature Icons */
+.feature-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Alerts */
+.alert {
+    border-radius: 8px;
+}
+
+.alert i {
+    flex-shrink: 0;
+}
+
+/* Form Inputs */
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 6px;
+}
+
+.btn-lg {
+    padding: 12px 24px;
+}
+
+/* File Input */
+input[type="file"] {
+    padding: 10px;
+}
+
+/* Textarea */
+textarea.form-control {
+    resize: vertical;
+    min-height: 200px;
+}
+
+/* History Cards */
+.card-title.text-truncate {
+    max-width: 100%;
+}
+
+/* Footer */
+.footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .score-circle {
+        width: 120px;
+        height: 120px;
+    }
+
+    .score-circle .score-value {
+        font-size: 2rem;
+    }
+
+    .score-badge {
+        width: 50px;
+        height: 50px;
+        font-size: 0.875rem;
+    }
+}
+
+/* Loading Spinner */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Collapsible Section */
+[data-bs-toggle="collapse"] .bi-chevron-down {
+    transition: transform 0.3s ease;
+}
+
+[data-bs-toggle="collapse"].collapsed .bi-chevron-down {
+    transform: rotate(-90deg);
+}
+
+/* Alert Types */
+.alert-critical {
+    background-color: #f8d7da;
+    border-color: #f5c2c7;
+    color: #842029;
+}
+
+/* Hover Effects */
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Link Styles */
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.btn:hover {
+    text-decoration: none;
+}
+
+/* Pre-formatted Text */
+pre {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}

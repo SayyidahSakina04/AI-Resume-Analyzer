@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Analyze Resume - AI Resume Analyzer{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="bi bi-upload me-2"></i>Analyze Your Resume</h4>
+                {% if is_ai_available %}
+                <span class="badge bg-success"><i class="bi bi-robot me-1"></i>AI Enabled</span>
+                {% else %}
+                <span class="badge bg-secondary"><i class="bi bi-cpu me-1"></i>Basic Mode</span>
+                {% endif %}
+            </div>
+            <div class="card-body p-4">
+                {% if is_ai_available %}
+                <div class="alert alert-success mb-4">
+                    <i class="bi bi-robot me-2"></i>
+                    <strong>AI Analysis Active!</strong> Your resume will be analyzed using Google Gemini for personalized, intelligent feedback.
+                </div>
+                {% else %}
+                <div class="alert alert-info mb-4">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>Basic Mode:</strong> Using keyword matching analysis. Set <code>GEMINI_API_KEY</code> environment variable to enable AI-powered analysis.
+                </div>
+                {% endif %}
+
+                <form method="POST" action="{{ url_for('analyze') }}" enctype="multipart/form-data" id="uploadForm">
+                    <!-- Resume Upload -->
+                    <div class="mb-4">
+                        <label for="resume" class="form-label fw-bold">
+                            <i class="bi bi-file-earmark-arrow-up me-1"></i>Upload Resume
+                        </label>
+                        <input type="file" class="form-control" id="resume" name="resume" accept=".pdf,.docx" required>
+                        <div class="form-text">Accepted formats: PDF, DOCX (Max 2MB)</div>
+                    </div>
+
+                    <!-- Job Description -->
+                    <div class="mb-4">
+                        <label for="job_description" class="form-label fw-bold">
+                            <i class="bi bi-briefcase me-1"></i>Job Description
+                        </label>
+                        <textarea class="form-control" id="job_description" name="job_description" rows="10" required placeholder="Paste the job description here..."></textarea>
+                        <div class="form-text">Copy and paste the complete job description from the job posting</div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                            <i class="bi bi-search me-2"></i>Analyze Resume
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- What You'll Get Card -->
+        <div class="card mt-4 border-success">
+            <div class="card-header bg-success text-white">
+                <i class="bi bi-check2-all me-2"></i>What You'll Get
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="mb-md-0">
+                            <li>Match score percentage</li>
+                            <li>Skills gap analysis</li>
+                            <li>Missing keywords identified</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="mb-0">
+                            {% if is_ai_available %}
+                            <li><strong>AI-powered suggestions</strong></li>
+                            <li><strong>Rewritten bullet examples</strong></li>
+                            <li><strong>Interview likelihood score</strong></li>
+                            {% else %}
+                            <li>Improvement suggestions</li>
+                            <li>ATS optimization tips</li>
+                            <li>Section analysis</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tips Card -->
+        <div class="card mt-4 border-info">
+            <div class="card-header bg-info text-white">
+                <i class="bi bi-lightbulb me-2"></i>Tips for Better Results
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li>Make sure your resume is text-based, not a scanned image</li>
+                    <li>Include the complete job description, not just a summary</li>
+                    <li>Use the same resume format you would submit to the employer</li>
+                    <li>The more detailed the job description, the better the analysis</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('uploadForm').addEventListener('submit', function() {
+    var btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Analyzing{% if is_ai_available %} with AI{% endif %}...';
+});
+</script>
+{% endblock %}

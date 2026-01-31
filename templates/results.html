@@ -1,0 +1,352 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Results - AI Resume Analyzer{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-clipboard-data me-2"></i>Analysis Results</h2>
+            <a href="{{ url_for('analyze') }}" class="btn btn-primary">
+                <i class="bi bi-plus-lg me-1"></i>New Analysis
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Match Score Card -->
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title text-muted">Match Score</h5>
+                <div class="score-circle mx-auto my-4 bg-{{ analysis.score_class }}">
+                    <span class="score-value">{{ analysis.match_score }}%</span>
+                </div>
+                <span class="badge bg-{{ analysis.score_class }} fs-6">{{ analysis.score_category }}</span>
+
+                {% if analysis.ai_analysis and analysis.ai_analysis.interview_likelihood %}
+                <div class="mt-3">
+                    <small class="text-muted">Interview Likelihood:</small>
+                    <span class="badge bg-{% if analysis.ai_analysis.interview_likelihood == 'high' %}success{% elif analysis.ai_analysis.interview_likelihood == 'medium' %}warning{% else %}danger{% endif %} ms-1">
+                        {{ analysis.ai_analysis.interview_likelihood|title }}
+                    </span>
+                </div>
+                {% endif %}
+
+                {% if analysis.ai_analysis and analysis.ai_analysis.ats_score %}
+                <div class="mt-2">
+                    <small class="text-muted">ATS Score:</small>
+                    <span class="badge bg-secondary ms-1">{{ analysis.ai_analysis.ats_score }}/100</span>
+                </div>
+                {% endif %}
+
+                <!-- Quick Stats -->
+                <div class="mt-4 text-start">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Matched Skills:</span>
+                        <span class="badge bg-success">{{ analysis.matched_skills|length }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Missing Skills:</span>
+                        <span class="badge bg-danger">{{ analysis.missing_skills|length }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted">Extra Skills:</span>
+                        <span class="badge bg-info">{{ analysis.extra_skills|length }}</span>
+                    </div>
+                </div>
+
+                <p class="text-muted mt-3 small">
+                    <i class="bi bi-calendar me-1"></i>{{ analysis.created_at }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Job Requirements Card -->
+        {% if analysis.jd_experience_level != 'not specified' or analysis.jd_years_required %}
+        <div class="card mt-3 shadow-sm">
+            <div class="card-header">
+                <i class="bi bi-briefcase me-2"></i>Job Requirements
+            </div>
+            <div class="card-body">
+                {% if analysis.jd_experience_level != 'not specified' %}
+                <div class="mb-2">
+                    <small class="text-muted">Level:</small>
+                    <span class="badge bg-secondary ms-2">{{ analysis.jd_experience_level|title }}</span>
+                </div>
+                {% endif %}
+                {% if analysis.jd_years_required %}
+                <div class="mb-2">
+                    <small class="text-muted">Experience:</small>
+                    <span class="badge bg-secondary ms-2">{{ analysis.jd_years_required }}+ years</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- AI Analysis Section -->
+    <div class="col-lg-8 mb-4">
+        {% if analysis.ai_analysis and not analysis.ai_analysis.error %}
+        <!-- AI Overall Impression -->
+        <div class="card shadow-sm mb-4 border-primary">
+            <div class="card-header bg-primary text-white">
+                <i class="bi bi-robot me-2"></i>AI Analysis
+            </div>
+            <div class="card-body">
+                <p class="lead mb-0">{{ analysis.ai_analysis.overall_impression }}</p>
+            </div>
+        </div>
+
+        <!-- Strengths & Weaknesses -->
+        <div class="row mb-4">
+            <div class="col-md-6 mb-3 mb-md-0">
+                <div class="card h-100 shadow-sm border-success">
+                    <div class="card-header bg-success text-white">
+                        <i class="bi bi-check-circle me-2"></i>Strengths
+                    </div>
+                    <div class="card-body">
+                        <ul class="mb-0">
+                            {% for strength in analysis.ai_analysis.strengths %}
+                            <li class="mb-2">{{ strength }}</li>
+                            {% else %}
+                            <li class="text-muted">No specific strengths identified</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100 shadow-sm border-danger">
+                    <div class="card-header bg-danger text-white">
+                        <i class="bi bi-exclamation-circle me-2"></i>Areas to Improve
+                    </div>
+                    <div class="card-body">
+                        <ul class="mb-0">
+                            {% for weakness in analysis.ai_analysis.weaknesses %}
+                            <li class="mb-2">{{ weakness }}</li>
+                            {% else %}
+                            <li class="text-muted">No specific weaknesses identified</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Improvement Suggestions -->
+        {% if analysis.ai_analysis.improvement_suggestions %}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <i class="bi bi-lightbulb me-2"></i>AI-Powered Suggestions
+            </div>
+            <div class="card-body">
+                {% for suggestion in analysis.ai_analysis.improvement_suggestions %}
+                <div class="mb-4 pb-3 {% if not loop.last %}border-bottom{% endif %}">
+                    <h6 class="text-primary"><i class="bi bi-arrow-right-circle me-1"></i>{{ suggestion.area }}</h6>
+                    <p class="text-muted small mb-2"><strong>Issue:</strong> {{ suggestion.current }}</p>
+                    <p class="mb-0"><strong>Suggestion:</strong> {{ suggestion.suggestion }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Rewritten Bullet Points -->
+        {% if analysis.ai_analysis.rewritten_bullets %}
+        <div class="card shadow-sm mb-4 border-info">
+            <div class="card-header bg-info text-white">
+                <i class="bi bi-pencil-square me-2"></i>Example Improvements
+            </div>
+            <div class="card-body">
+                {% for bullet in analysis.ai_analysis.rewritten_bullets %}
+                <div class="mb-3 {% if not loop.last %}pb-3 border-bottom{% endif %}">
+                    <small class="text-muted">Context: {{ bullet.original_context }}</small>
+                    <div class="mt-2 p-2 bg-light rounded">
+                        <i class="bi bi-check text-success me-1"></i>{{ bullet.improved }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Keywords to Add -->
+        {% if analysis.ai_analysis.keywords_to_add %}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <i class="bi bi-tags me-2"></i>Keywords to Add to Your Resume
+            </div>
+            <div class="card-body">
+                {% for keyword in analysis.ai_analysis.keywords_to_add %}
+                <span class="badge bg-primary me-1 mb-1">{{ keyword }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Missing Skills Analysis -->
+        {% if analysis.ai_analysis.missing_skills_analysis %}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <i class="bi bi-puzzle me-2"></i>Skills Gap Analysis
+            </div>
+            <div class="card-body">
+                <p class="mb-0">{{ analysis.ai_analysis.missing_skills_analysis }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- AI Summary -->
+        {% if analysis.ai_analysis.summary %}
+        <div class="card shadow-sm border-warning">
+            <div class="card-header bg-warning">
+                <i class="bi bi-star me-2"></i>Key Takeaway
+            </div>
+            <div class="card-body">
+                <p class="mb-0">{{ analysis.ai_analysis.summary }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <!-- No AI Analysis - Show Skills Analysis -->
+        <div class="card h-100 shadow-sm">
+            <div class="card-header">
+                <i class="bi bi-diagram-3 me-2"></i>Skills Analysis
+                {% if not is_ai_available %}
+                <span class="badge bg-secondary float-end">Basic Mode</span>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                {% if not is_ai_available %}
+                <div class="alert alert-info mb-3">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>Tip:</strong> Add a <code>GEMINI_API_KEY</code> environment variable to enable AI-powered analysis with personalized suggestions.
+                </div>
+                {% endif %}
+
+                <!-- High Priority Missing -->
+                {% if analysis.high_priority_missing %}
+                <div class="alert alert-danger mb-3">
+                    <h6 class="alert-heading mb-2">
+                        <i class="bi bi-exclamation-triangle me-1"></i>Critical Missing Skills
+                    </h6>
+                    <div class="skill-tags">
+                        {% for skill in analysis.high_priority_missing %}
+                        <span class="badge bg-danger me-1 mb-1">{{ skill }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <h6 class="text-success">
+                            <i class="bi bi-check-circle me-1"></i>Matched Skills ({{ analysis.matched_skills|length }})
+                        </h6>
+                        <div class="skill-tags">
+                            {% for skill in analysis.matched_skills %}
+                            <span class="badge bg-success me-1 mb-1">{{ skill }}</span>
+                            {% else %}
+                            <span class="text-muted">No matching skills found</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <h6 class="text-danger">
+                            <i class="bi bi-x-circle me-1"></i>Missing Skills ({{ analysis.missing_skills|length }})
+                        </h6>
+                        <div class="skill-tags">
+                            {% for skill in analysis.missing_skills %}
+                            <span class="badge bg-danger me-1 mb-1">{{ skill }}</span>
+                            {% else %}
+                            <span class="text-muted">No missing skills!</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <h6 class="text-info">
+                    <i class="bi bi-plus-circle me-1"></i>Your Additional Skills ({{ analysis.extra_skills|length }})
+                </h6>
+                <div class="skill-tags">
+                    {% for skill in analysis.extra_skills %}
+                    <span class="badge bg-info me-1 mb-1">{{ skill }}</span>
+                    {% else %}
+                    <span class="text-muted">All your skills match this job!</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Rule-based Suggestions (shown when AI is available as supplementary, or as main when AI unavailable) -->
+{% if analysis.suggestions %}
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <i class="bi bi-list-check me-2"></i>{% if analysis.ai_analysis %}Additional Tips{% else %}Improvement Suggestions{% endif %}
+            </div>
+            <div class="card-body">
+                {% for suggestion in analysis.suggestions %}
+                <div class="alert alert-{{ 'danger' if suggestion.type == 'critical' else suggestion.type }} d-flex align-items-start mb-3" role="alert">
+                    <div class="me-3 flex-shrink-0">
+                        {% if suggestion.type == 'danger' or suggestion.type == 'critical' %}
+                        <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+                        {% elif suggestion.type == 'warning' %}
+                        <i class="bi bi-exclamation-circle-fill fs-4"></i>
+                        {% elif suggestion.type == 'success' %}
+                        <i class="bi bi-check-circle-fill fs-4"></i>
+                        {% else %}
+                        <i class="bi bi-info-circle-fill fs-4"></i>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <strong>{{ suggestion.category }}</strong>
+                        <p class="mb-0">{{ suggestion.message }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Job Description Preview -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header collapsed" data-bs-toggle="collapse" data-bs-target="#jdCollapse" style="cursor: pointer;">
+                <i class="bi bi-briefcase me-2"></i>Job Description
+                <i class="bi bi-chevron-down float-end"></i>
+            </div>
+            <div class="collapse" id="jdCollapse">
+                <div class="card-body">
+                    <pre class="mb-0" style="white-space: pre-wrap; font-family: inherit;">{{ analysis.job_description }}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Action Buttons -->
+<div class="row mt-4 mb-4">
+    <div class="col-12 text-center">
+        <a href="{{ url_for('analyze') }}" class="btn btn-primary btn-lg me-2">
+            <i class="bi bi-arrow-repeat me-1"></i>Analyze Another Resume
+        </a>
+        <a href="{{ url_for('history') }}" class="btn btn-outline-secondary btn-lg">
+            <i class="bi bi-clock-history me-1"></i>View History
+        </a>
+    </div>
+</div>
+{% endblock %}

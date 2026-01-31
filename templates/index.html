@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}AI Resume Analyzer - Free Resume Analysis{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <!-- Hero Section -->
+        <div class="text-center py-5">
+            <h1 class="display-4 fw-bold text-primary mb-3">
+                <i class="bi bi-file-earmark-check"></i> AI Resume Analyzer
+            </h1>
+            <p class="lead text-muted mb-3">
+                Compare your resume against job descriptions and get instant feedback
+                to improve your chances of landing your dream job.
+            </p>
+            {% if is_ai_available %}
+            <p class="mb-4">
+                <span class="badge bg-success fs-6 px-3 py-2">
+                    <i class="bi bi-robot me-1"></i> Powered by Google Gemini AI
+                </span>
+            </p>
+            {% endif %}
+            <p class="text-success fw-bold mb-4">
+                <i class="bi bi-check-circle me-1"></i> 100% Free - No Registration Required
+            </p>
+            <a href="{{ url_for('analyze') }}" class="btn btn-primary btn-lg px-5">
+                <i class="bi bi-upload me-2"></i>Analyze Your Resume Now
+            </a>
+        </div>
+
+        <!-- Features -->
+        <div class="row g-4 py-5">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon bg-primary bg-gradient text-white rounded-circle mb-3 mx-auto" style="width: 60px; height: 60px; line-height: 60px;">
+                            <i class="bi bi-percent fs-4"></i>
+                        </div>
+                        <h5 class="card-title">Match Score</h5>
+                        <p class="card-text text-muted">
+                            Get a percentage score showing how well your resume matches the job requirements.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon bg-success bg-gradient text-white rounded-circle mb-3 mx-auto" style="width: 60px; height: 60px; line-height: 60px;">
+                            <i class="bi bi-list-check fs-4"></i>
+                        </div>
+                        <h5 class="card-title">Skill Analysis</h5>
+                        <p class="card-text text-muted">
+                            See which skills you have that match the job and which ones you're missing.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm {% if is_ai_available %}border-success{% endif %}">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon bg-{% if is_ai_available %}success{% else %}info{% endif %} bg-gradient text-white rounded-circle mb-3 mx-auto" style="width: 60px; height: 60px; line-height: 60px;">
+                            <i class="bi bi-robot fs-4"></i>
+                        </div>
+                        <h5 class="card-title">
+                            AI Suggestions
+                            {% if is_ai_available %}<span class="badge bg-success ms-1">Active</span>{% endif %}
+                        </h5>
+                        <p class="card-text text-muted">
+                            {% if is_ai_available %}
+                            Get personalized, AI-powered suggestions to improve your resume and increase your chances.
+                            {% else %}
+                            Receive actionable tips to improve your resume and increase ATS compatibility.
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if is_ai_available %}
+        <!-- AI Features Section -->
+        <div class="card border-success mb-5">
+            <div class="card-header bg-success text-white">
+                <i class="bi bi-robot me-2"></i>AI-Powered Features
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="mb-md-0">
+                            <li><strong>Intelligent Analysis</strong> - Understands context, not just keywords</li>
+                            <li><strong>Personalized Feedback</strong> - Suggestions tailored to your resume</li>
+                            <li><strong>Strength & Weakness Analysis</strong> - Know where you stand</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="mb-0">
+                            <li><strong>Rewritten Bullet Points</strong> - See how to improve your descriptions</li>
+                            <li><strong>Interview Likelihood</strong> - Estimate your chances</li>
+                            <li><strong>ATS Score</strong> - Check if you'll pass the bots</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- How It Works -->
+        <div class="py-5">
+            <h2 class="text-center mb-4">How It Works</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="d-flex align-items-start">
+                        <div class="step-number bg-primary text-white rounded-circle me-3 flex-shrink-0" style="width: 40px; height: 40px; line-height: 40px; text-align: center; font-weight: bold;">1</div>
+                        <div>
+                            <h5>Upload Your Resume</h5>
+                            <p class="text-muted">Upload your resume in PDF or DOCX format.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex align-items-start">
+                        <div class="step-number bg-primary text-white rounded-circle me-3 flex-shrink-0" style="width: 40px; height: 40px; line-height: 40px; text-align: center; font-weight: bold;">2</div>
+                        <div>
+                            <h5>Paste Job Description</h5>
+                            <p class="text-muted">Copy and paste the job description you're applying for.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex align-items-start">
+                        <div class="step-number bg-primary text-white rounded-circle me-3 flex-shrink-0" style="width: 40px; height: 40px; line-height: 40px; text-align: center; font-weight: bold;">3</div>
+                        <div>
+                            <h5>Get {% if is_ai_available %}AI{% endif %} Results</h5>
+                            <p class="text-muted">Receive your match score and {% if is_ai_available %}AI-powered{% endif %} improvement suggestions.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="text-center py-4">
+            <a href="{{ url_for('analyze') }}" class="btn btn-success btn-lg px-5">
+                <i class="bi bi-rocket-takeoff me-2"></i>Get Started - It's Free!
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
